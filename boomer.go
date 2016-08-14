@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Boomer is a count down timer and can trigger a function.
+// Boomer is a count down timer and can trigger function `f` when timeout.
 type Boomer struct {
 	SECONDS_INIT uint64
 	seconds      uint64
@@ -15,7 +15,7 @@ type Boomer struct {
 	boomed       bool
 }
 
-// NewBoomer creates a boomer
+// NewBoomer creates a boomer, time is in seconds. You need to define function f.
 func NewBoomer(seconds uint64, f interface{}) (*Boomer, error) {
 	if seconds <= 0 {
 		return nil, errors.New("invalid seconds")
@@ -27,7 +27,7 @@ func NewBoomer(seconds uint64, f interface{}) (*Boomer, error) {
 	return p, nil
 }
 
-// Let timer start to count down
+// Arm let timer count down now.
 func (p *Boomer) Arm() {
 	go func() {
 		for ; p.seconds+1 > 0; p.seconds-- {
@@ -42,7 +42,7 @@ func (p *Boomer) Arm() {
 	return
 }
 
-// Cancel boomer
+// Unarm cancels timer, the boomer will no longer boom.
 func (p *Boomer) Unarm() {
 	p.SECONDS_INIT = 0
 	p.seconds = 0
@@ -50,7 +50,7 @@ func (p *Boomer) Unarm() {
 	return
 }
 
-// Reset time to init
+// Rewind count down timer to initial value(defined when you call Arm()).
 func (p *Boomer) Rewind() error {
 	if !p.armed {
 		return errors.New("cannot rewind, boomer not armed")
